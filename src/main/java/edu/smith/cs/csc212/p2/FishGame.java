@@ -43,6 +43,9 @@ public class FishGame {
 	 */
 	int score;
 	
+	public static final int NUM_ROCKS = 20;
+
+	
 	/**
 	 * Create a FishGame of a particular size.
 	 * @param w how wide is the grid?
@@ -59,13 +62,13 @@ public class FishGame {
 		
 		// TODO(lab) Generate some more rocks!
 		// TODO(lab) Make 5 into a constant, so it's easier to find & change.
-		int rocks = 20;
-		for (int i=0; i<rocks; i++) {
+		for (int i=0; i<NUM_ROCKS; i++) {
 			world.insertRockRandomly();
 		}
 		
 		// TODO(lab) Make the snail!
-		
+		world.insertSnailRandomly();
+		world.insertSnailRandomly();
 		
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
@@ -143,6 +146,7 @@ public class FishGame {
 		for (Fish lost : missing) {
 			// 30% of the time, lost fish move randomly.
 			if (rand.nextDouble() < 0.3) {
+				lost.moveRandomly();
 				// TODO(lab): What goes here?
 			}
 		}
