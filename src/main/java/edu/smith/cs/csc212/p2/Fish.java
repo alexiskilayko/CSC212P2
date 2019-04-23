@@ -16,7 +16,7 @@ public class Fish extends WorldObject {
 	/**
 	 * A fish is only special because of its color now!
 	 */
-	public static Color[] COLORS = {
+	/*public static Color[] COLORS = {
 			Color.red,
 			Color.green,
 			Color.green,
@@ -26,11 +26,11 @@ public class Fish extends WorldObject {
 			Color.cyan
 			// Add more colors.
 			// Maybe make a special fish that is more points?
-	};
+	};*/
 	/**
 	 * This is an index into the {@link #COLORS} array.
 	 */
-	int color;
+	//int color;
 	/**
 	 * This is the number of points a fish is worth.
 	 */
@@ -62,7 +62,7 @@ public class Fish extends WorldObject {
 	 */
 	public Fish(int color, World world) {
 		super(world);
-		this.color = color;
+		/*this.color = color;
 		// Designate different point values for different colors.
 		if ((this.color == 1) || (this.color == 2) || (this.color == 3)) {
 			this.points = 10;
@@ -71,7 +71,7 @@ public class Fish extends WorldObject {
 		} else if (this.color == 6) {
 			this.points = 30;
 		} 
-		// Randomize whether or not the fish is fastScared.
+		// Randomize whether or not the fish is fastScared.*/
 		this.fastScared = random.nextBoolean();
 	}
 	
@@ -79,9 +79,9 @@ public class Fish extends WorldObject {
 	 * What actual color is this fish? We store an index, so get it here.
 	 * @return the Color object from our array.
 	 */
-	public Color getColor() {
+	/*public Color getColor() {
 		return COLORS[this.color];
-	}
+	}*/
 	
 	/**
 	 * Animate our fish by facing left and then right over time.
@@ -98,37 +98,25 @@ public class Fish extends WorldObject {
 		if (dt > 100) {
 			dt = 0;
 		}
-		Shape circle = new Ellipse2D.Double(-0.6, -0.6, 1.2, 1.2);
-		Shape body = new Ellipse2D.Double(-.40, -.2, .8, .4);
-		Shape tail = new Ellipse2D.Double(+.2, -.3, .2, .6);
-		Shape eye = new Ellipse2D.Double(-.25, -.1, .1, .1);
-		
-		Color color = getColor();
-		Color tailColor = color.darker();
+		g.setColor(Color.yellow);
+		g.fill(new Ellipse2D.Double(-0.4, -0.4, 0.8, 0.8));
+		//Color tailColor = color.darker();
 
-		
-		Graphics2D flipped = (Graphics2D) g.create();
+		/*Graphics2D flipped = (Graphics2D) g.create();
 		if (dt < 50) {
 			flipped.scale(-1, 1);
 		}
 		
 		if (this.player) {
-			flipped.setColor(new Color(1f,1f,1f,0.5f));
-			flipped.fill(circle);
+			flipped.setColor(color);
+			flipped.fill(body);
 		}
 
 		// Draw the fish of size (1x1, roughly, at 0,0).
 		flipped.setColor(color);
 		flipped.fill(body);
-
-		flipped.setColor(Color.black);
-		flipped.fill(eye);
-
-		// draw tail:
-		flipped.setColor(tailColor);
-		flipped.fill(tail);
 		
-		flipped.dispose();
+		flipped.dispose();*/
 	}
 	
 	@Override

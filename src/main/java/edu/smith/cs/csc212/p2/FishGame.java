@@ -102,10 +102,10 @@ public class FishGame {
 		world.register(player);
 		
 		// Generate fish of all the colors but the first into the "missing" List.
-		for (int ft = 1; ft < Fish.COLORS.length; ft++) {
+		/*for (int ft = 1; ft < Fish.COLORS.length; ft++) {
 			Fish friend = world.insertFishRandomly(ft);
 			missing.add(friend);
-		}
+		}*/
 		
 		// Generate pieces of fish food at random places.
 		for (int i=0; i<NUM_FOOD; i++) {
