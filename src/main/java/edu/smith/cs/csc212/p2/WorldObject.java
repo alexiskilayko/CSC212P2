@@ -26,11 +26,11 @@ public abstract class WorldObject {
 	/**
 	 * Where am I? x-tile in the grid.
 	 */
-	private int x;
+	public int x;
 	/**
 	 * Where am I? y-tile in the grid.
 	 */
-	private int y;
+	public int y;
 	/**
 	 * What world do I belong to?
 	 */
@@ -120,7 +120,7 @@ public abstract class WorldObject {
 	public boolean isFish() {
 		return this instanceof Fish;
 	}
-
+	
 	/**
 	 * Is this the player?
 	 * 
@@ -129,6 +129,16 @@ public abstract class WorldObject {
 	public boolean isPlayer() {
 		return isFish() && ((Fish) this).player;
 	}
+	
+	/**
+	 * Is this a rock?
+	 * 
+	 * @return true if this is a rock.
+	 */
+	public boolean isRock() {
+		return this instanceof Rock;
+	}
+	
 
 	/**
 	 * Move this object down if possible.

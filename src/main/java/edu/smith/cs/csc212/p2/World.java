@@ -149,6 +149,16 @@ public class World {
 		insertRandomly(r);
 		return r;
 	}
+
+	/**
+	 * Insert a new FallingRock into the world at random.
+	 * @return the FallingRock.
+	 */
+	public FallingRock insertFallingRockRandomly() {
+		FallingRock r = new FallingRock(this);
+		insertRandomly(r);
+		return r;
+	}
 	
 	/**
 	 * Insert a new Fish into the world at random of a specific color.
@@ -161,6 +171,10 @@ public class World {
 		return f;
 	}
 	
+	/**
+	 * Insert a fish home into the world at a random position.
+	 * @return the fish home.
+	 */
 	public FishHome insertFishHome() {
 		FishHome home = new FishHome(this);
 		insertRandomly(home);
@@ -175,6 +189,16 @@ public class World {
 		Snail snail = new Snail(this);
 		insertRandomly(snail);
 		return snail;
+	}
+	
+	/**
+	 * Insert food into the world at a random position
+	 * @return the food.
+	 */
+	public FishFood insertFoodRandomly() {
+		FishFood food = new FishFood(this);
+		insertRandomly(food);
+		return food;
 	}
 	
 	/**
@@ -197,7 +221,14 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// TODO(P2): Don't let us move over rocks as a Fish.
+			// Don't let us move over rocks as a Fish.
+			if (it instanceof Rock) {
+				return false;
+			}
+			if ((it instanceof Fish) && (whoIsAsking.isPlayer() == false)) {
+				return false;
+			}
+			
 			// The other fish shouldn't step "on" the player, the player should step on the other fish.
 			if (it instanceof Snail) {
 				// This if-statement doesn't let anyone step on the Snail.
@@ -205,6 +236,7 @@ public class World {
 				return false;
 			}
 		}
+		
 		
 		// If we didn't see an obstacle, we can move there!
 		return true;
@@ -226,15 +258,17 @@ public class World {
 	 * @param followers a set of objects to follow the leader.
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
-		// TODO(P2) Comment this method!
-		// What is recentPositions?
-		// What is followers?
-		// What is target?
-		// Why is past = putWhere[i+1]? Why not putWhere[i]?
+		// Comment this method!
+		// recentPositions is the previous tiles that the player has passed through before its current position.
+		// followers is the list of fish that the player has found.
+		// target is the player fish.
+		// past = putWhere[i+1] so that the follower fish are added behind the player fish. 
+		// putWhere[i] would put the first follower fish on top of the player.
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i<followers.size(); i++) {
 			IntPoint past = putWhere.get(i+1);
 			followers.get(i).setPosition(past.x, past.y);
+			System.out.println(followers);
 		}
 	}
 }

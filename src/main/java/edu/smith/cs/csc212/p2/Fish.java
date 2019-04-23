@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.Random;
 
 /**
  * Most Fish behavior lives up in WorldObject (a Fish just looks special!).
@@ -18,32 +19,42 @@ public class Fish extends WorldObject {
 	public static Color[] COLORS = {
 			Color.red,
 			Color.green,
+			Color.green,
+			Color.green,
 			Color.yellow,
-			Color.blue,
-			Color.cyan,
-			Color.orange,
-			Color.magenta,
-			Color.pink
-			// TODO: (lab) Add more colors.
-			// TODO: (P2) Maybe make a special fish that is more points?
+			Color.yellow,
+			Color.cyan
+			// Add more colors.
+			// Maybe make a special fish that is more points?
 	};
 	/**
 	 * This is an index into the {@link #COLORS} array.
 	 */
 	int color;
 	/**
-	 * Whether or not this is the player;
+	 * This is the number of points a fish is worth.
 	 */
+	int points;
+	/**
+	 * Whether or not this is the player;
+	 */	
 	boolean player = false;
-	
+	/**
+	 * Whether or not the fish gets scared fast.
+	 */
+	public boolean fastScared;
+	/**
+	 * Random
+	 */
+    Random random = new Random();
+;
 	/**
 	 * Called only on the Fish that is the player!
 	 */
 	public void markAsPlayer() {
 		this.player = true;
 	}
-
-
+	
 	/**
 	 * A Fish knows what World it belongs to, because all WorldObjects do.
 	 * @param color Color by number.
@@ -52,6 +63,16 @@ public class Fish extends WorldObject {
 	public Fish(int color, World world) {
 		super(world);
 		this.color = color;
+		// Designate different point values for different colors.
+		if ((this.color == 1) || (this.color == 2) || (this.color == 3)) {
+			this.points = 10;
+		} else if ((this.color == 4) || (this.color == 5)) {
+			this.points = 20;
+		} else if (this.color == 6) {
+			this.points = 30;
+		} 
+		// Randomize whether or not the fish is fastScared.
+		this.fastScared = random.nextBoolean();
 	}
 	
 	/**

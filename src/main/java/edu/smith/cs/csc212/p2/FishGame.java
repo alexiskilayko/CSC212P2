@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import me.jjfoley.gfx.IntPoint;
+
 /**
  * This class manages our model of gameplay: missing and found fish, etc.
  * @author jfoley
@@ -24,6 +26,10 @@ public class FishGame {
 	 */
 	FishHome home;
 	/**
+	 * This is the food that fish can eat.
+	 */
+	FishFood food;
+	/**
 	 * These are the missing fish!
 	 */
 	List<Fish> missing;
@@ -32,18 +38,30 @@ public class FishGame {
 	 * These are fish we've found!
 	 */
 	List<Fish> found;
-	
+	/**
+	 * These are fish that have returned home.
+	 */
+	List<Fish> atHome;
 	/**
 	 * Number of steps!
 	 */
 	int stepsTaken;
-	
 	/**
 	 * Score!
 	 */
 	int score;
-	
+	/**
+	 * This is the number of rocks that we want to generate.
+	 */
 	public static final int NUM_ROCKS = 20;
+	/**
+	 * This is the number of snails that we want to generate.
+	 */
+	public static final int NUM_SNAILS = 2;
+	/**
+	 * This is the number of fish food that we want to generate.
+	 */
+	public static final int NUM_FOOD = 3;
 
 	
 	/**
@@ -56,20 +74,26 @@ public class FishGame {
 		
 		missing = new ArrayList<Fish>();
 		found = new ArrayList<Fish>();
+		atHome = new ArrayList<Fish>(); // Instantiate a list of fish that have returned home.
 		
 		// Add a home!
 		home = world.insertFishHome();
 		
-		// TODO(lab) Generate some more rocks!
-		// TODO(lab) Make 5 into a constant, so it's easier to find & change.
-		for (int i=0; i<NUM_ROCKS; i++) {
+		// Generate some normal rocks.
+		for (int i=0; i<NUM_ROCKS/2; i++) {
 			world.insertRockRandomly();
 		}
 		
-		// TODO(lab) Make the snail!
-		world.insertSnailRandomly();
-		world.insertSnailRandomly();
+		// Generate some falling rocks.
+		for (int i=0; i<NUM_ROCKS/2; i++) {
+			world.insertFallingRockRandomly();
+		}
 		
+		// (lab) Make the snail!
+		for (int i=0; i<NUM_SNAILS; i++) {
+			world.insertSnailRandomly();
+		}
+				
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
 		// Start the player at "home".
@@ -81,6 +105,11 @@ public class FishGame {
 		for (int ft = 1; ft < Fish.COLORS.length; ft++) {
 			Fish friend = world.insertFishRandomly(ft);
 			missing.add(friend);
+		}
+		
+		// Generate pieces of fish food at random places.
+		for (int i=0; i<NUM_FOOD; i++) {
+			world.insertFoodRandomly();
 		}
 	}
 	
@@ -98,8 +127,8 @@ public class FishGame {
 	 * @return true if the player has won (or maybe lost?).
 	 */
 	public boolean gameOver() {
-		// TODO(P2) We want to bring the fish home before we win!
-		return missing.isEmpty();
+		// Game over only if there are no fish in both the missing and found lists, i.e. all fish are home.
+		return missing.isEmpty() && found.isEmpty();
 	}
 
 	/**
@@ -110,26 +139,54 @@ public class FishGame {
 		this.stepsTaken += 1;
 				
 		// These are all the objects in the world in the same cell as the player.
-		List<WorldObject> overlap = this.player.findSameCell();
+		List<WorldObject> playerOverlap = this.player.findSameCell();
 		// The player is there, too, let's skip them.
-		overlap.remove(this.player);
+		playerOverlap.remove(this.player);
 		
-		// If we find a fish, remove it from missing.
-		for (WorldObject wo : overlap) {
-			// It is missing if it's in our missing list.
+		// If we find an object...
+		for (WorldObject wo : playerOverlap) {
+			// If we find a fish...
+			// A fish is missing if it's in our missing list.
 			if (missing.contains(wo)) {
 				// Remove this fish from the missing list.
 				missing.remove(wo);
 				
 				// Remove from world.
-				// TODO(lab): add to found instead! (So we see objectsFollow work!)
-				world.remove(wo);
+				// (lab): add to found instead! (So we see objectsFollow work!)
+				Fish fish = (Fish)wo;
+				found.add(fish);
 				
 				// Increase score when you find a fish!
+				score += fish.points;
+			// If we find food, score increases and remove from world.
+			} else if (wo instanceof FishFood) {
 				score += 10;
+				world.remove(wo);
+			// If we find the fish home, return our following fish and remove them from world.
+			} else if (wo instanceof FishHome) {
+				for (Fish f : found) {
+					atHome.add(f);
+				}
+				for (Fish f : atHome) {
+					found.remove(f);
+					world.remove(f);
+				} 
+			}
+		} 
+		
+		// If wandering fish find the fish food, remove food from world. Score does not increase.
+		for (Fish f : missing) {
+			// Find the objects that overlap with wandering fish.
+			List<WorldObject> fishOverlap = f.findSameCell();
+			// Exclude the player fish.
+			fishOverlap.remove(this.player);
+			for (WorldObject wo : fishOverlap) {
+				if (wo instanceof FishFood) {
+					world.remove(wo);
+				}
 			}
 		}
-		
+									 
 		// Make sure missing fish *do* something.
 		wanderMissingFish();
 		// When fish get added to "found" they will follow the player around.
@@ -137,7 +194,7 @@ public class FishGame {
 		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
-	
+		
 	/**
 	 * Call moveRandomly() on all of the missing fish to make them seem alive.
 	 */
@@ -145,11 +202,14 @@ public class FishGame {
 		Random rand = ThreadLocalRandom.current();
 		for (Fish lost : missing) {
 			// 30% of the time, lost fish move randomly.
-			if (rand.nextDouble() < 0.3) {
+			if ((lost.fastScared == false) && (rand.nextDouble() < 0.3)) {
 				lost.moveRandomly();
-				// TODO(lab): What goes here?
+			// 80% of the time, lost fish move randomly.
+			} else if ((lost.fastScared == true) && (rand.nextDouble() < 0.8)) {
+				lost.moveRandomly();
 			}
 		}
+		
 	}
 
 	/**
@@ -158,11 +218,14 @@ public class FishGame {
 	 * @param y - the y-tile.
 	 */
 	public void click(int x, int y) {
-		// TODO(P2) use this print to debug your World.canSwim changes!
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
-		// TODO(P2) allow the user to click and remove rocks.
-
+		// If there is a rock at the point where the user clicks, remove.
+		for (WorldObject point : atPoint) {
+			if (point.isRock() == true) { 
+				point.remove();
+			}
+		}
 	}
 	
 }
