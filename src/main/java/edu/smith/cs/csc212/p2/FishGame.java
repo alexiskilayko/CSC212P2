@@ -84,10 +84,10 @@ public class FishGame {
 			world.insertRockRandomly();
 		}
 		
-		// Generate some falling rocks.
+		/*// Generate some falling rocks.
 		for (int i=0; i<NUM_ROCKS/2; i++) {
 			world.insertFallingRockRandomly();
-		}
+		}*/
 		
 		// (lab) Make the snail!
 		for (int i=0; i<NUM_SNAILS; i++) {
