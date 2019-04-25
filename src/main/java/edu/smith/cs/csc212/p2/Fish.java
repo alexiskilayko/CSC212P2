@@ -14,24 +14,6 @@ import java.util.Random;
  */
 public class Fish extends WorldObject {
 	/**
-	 * A fish is only special because of its color now!
-	 */
-	/*public static Color[] COLORS = {
-			Color.red,
-			Color.green,
-			Color.green,
-			Color.green,
-			Color.yellow,
-			Color.yellow,
-			Color.cyan
-			// Add more colors.
-			// Maybe make a special fish that is more points?
-	};*/
-	/**
-	 * This is an index into the {@link #COLORS} array.
-	 */
-	//int color;
-	/**
 	 * This is the number of points a fish is worth.
 	 */
 	int points;
@@ -62,26 +44,9 @@ public class Fish extends WorldObject {
 	 */
 	public Fish(int color, World world) {
 		super(world);
-		/*this.color = color;
-		// Designate different point values for different colors.
-		if ((this.color == 1) || (this.color == 2) || (this.color == 3)) {
-			this.points = 10;
-		} else if ((this.color == 4) || (this.color == 5)) {
-			this.points = 20;
-		} else if (this.color == 6) {
-			this.points = 30;
-		} 
 		// Randomize whether or not the fish is fastScared.*/
 		this.fastScared = random.nextBoolean();
 	}
-	
-	/**
-	 * What actual color is this fish? We store an index, so get it here.
-	 * @return the Color object from our array.
-	 */
-	/*public Color getColor() {
-		return COLORS[this.color];
-	}*/
 	
 	/**
 	 * Animate our fish by facing left and then right over time.
@@ -100,23 +65,6 @@ public class Fish extends WorldObject {
 		}
 		g.setColor(Color.yellow);
 		g.fill(new Ellipse2D.Double(-0.4, -0.4, 0.8, 0.8));
-		//Color tailColor = color.darker();
-
-		/*Graphics2D flipped = (Graphics2D) g.create();
-		if (dt < 50) {
-			flipped.scale(-1, 1);
-		}
-		
-		if (this.player) {
-			flipped.setColor(color);
-			flipped.fill(body);
-		}
-
-		// Draw the fish of size (1x1, roughly, at 0,0).
-		flipped.setColor(color);
-		flipped.fill(body);
-		
-		flipped.dispose();*/
 	}
 	
 	@Override

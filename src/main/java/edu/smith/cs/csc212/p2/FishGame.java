@@ -128,7 +128,8 @@ public class FishGame {
 	 */
 	public boolean gameOver() {
 		// Game over only if there are no fish in both the missing and found lists, i.e. all fish are home.
-		return missing.isEmpty() && found.isEmpty();
+		//return missing.isEmpty() && found.isEmpty();
+		return false;
 	}
 
 	/**
